@@ -1,0 +1,45 @@
+#!/usr/bin/env python
+
+"""
+Do you find yourself sitting in the SIPB office, listening to your
+music on Spotify, thinking, "Man, I sure wish I could play this on zsr
+right now."?  Well, with this handy-dandy management system, now you
+can!
+"""
+
+import sys
+import socket
+
+class NotifyUserError(Exception):
+    """
+    All errors of this class will be reported through the API as
+    having status = '1', meaning that it was an error condition due to
+    to a check in the sql-remctl progrma itself. All other Exceptions
+    will be reported as status = '2', meaning they are most likely
+    programmer error and need to be reported back to the developers.
+    """
+    pass
+
+def main():
+    # Figure out which function to run
+     argv = sys.argv
+     argc = len(argv)
+#     if argc == 1:
+#         raise NotifyUserError('No operation specified.  Try `remctl sql help`.')
+     
+     if argc != 3:
+         sys.stderr.write("Specify a host and port")
+         sys.exit(1)
+
+     host = argv[1]
+     port = int(argv[2])
+     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+     s.connect((host, port))
+     s.send('hi')
+     message = ''
+     while message == '':
+         message = s.recv(300)
+     print message
+
+if __name__ == '__main__':
+    main()
